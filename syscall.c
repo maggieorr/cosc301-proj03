@@ -17,6 +17,12 @@
 int
 fetchint(uint addr, int *ip)
 {
+  if(proc->pid>1){ //CHANGED
+    if(addr<PGSIZE){
+      return -1;
+    }
+  }
+  
   if(addr >= proc->sz || addr+4 > proc->sz)
     return -1;
   *ip = *(int*)(addr);
@@ -29,6 +35,11 @@ fetchint(uint addr, int *ip)
 int
 fetchstr(uint addr, char **pp)
 {
+  if(proc->pid>1){ //CHANGED
+    if(addr<PGSIZE){
+      return -1;
+    }
+  }
   char *s, *ep;
 
   if(addr >= proc->sz)
