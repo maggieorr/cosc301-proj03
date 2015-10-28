@@ -464,3 +464,5 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int mprotect

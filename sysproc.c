@@ -92,17 +92,23 @@ sys_uptime(void)
 
 
 int sys_mprotect(void) {
-    int pid;
-    if (argint(0, &pid) < 0) {
-        return -1;
-    }
-    return kern_mprotect(pid);
+	//should we be checking address location as well???
+    int len;
+    void *addr;
+    if(argint(1, &len) < 0)
+       return -1;
+    if(ptrint(0, &addr, sizeof(void*))<0)
+       return -1;
+
+    return mprotect(addr, len);
 }
 
 int sys_munprotect(void) {
-    int pid;
-    if (argint(0, &pid) < 0) {
-        return -1;
-    }
-    return kern_munprotect(pid);
+    int len;
+    int addr;
+    if(argint(1, &len) < 0)
+       return -1;
+    addr = proc->sz;
+
+    return munprotect(addr, len);
 }
