@@ -465,4 +465,49 @@ procdump(void)
   }
 }
 
-int mprotect
+int mprotect(void *addr,int len) {
+    int pid = proc->pid;
+    int *size = addr;
+    
+    int rv = -1;
+    acquire(&ptable.lock);
+    if (pid < 0 || pid >= NPROC) {
+      release(&ptable.lock);
+      return rv;
+    }
+    int i;
+    for (i = *size; i < *size + len*PGSIZE; i+=PGSIZE) {
+       if (ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid) {
+          struct proc *p = &ptable.proc[pid];
+          do_mprotect(p);
+          rv = 0;
+          break;
+       }
+    }
+    release(&ptable.lock);
+    return rv;
+}
+
+
+int munprotect(void *addr,int len) {
+    int pid = proc->pid;
+    int *size = addr;
+    
+    int rv = -1;
+    acquire(&ptable.lock);
+    if (pid < 0 || pid >= NPROC) {
+      release(&ptable.lock);
+      return rv;
+    }
+    int i;
+    for (i = *size; i < *size + len*PGSIZE; i+=PGSIZE) {
+       if (ptable.proc[i].state != UNUSED && ptable.proc[i].pid == pid) {
+          struct proc *p = &ptable.proc[pid];
+          do_mprotect(p);
+          rv = 0;
+          break;
+       }
+    }
+    release(&ptable.lock);
+    return rv;
+}

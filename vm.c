@@ -377,10 +377,36 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
-int mprotect(void *addr, int len){
+void do_mprotect(struct proc *p) {
+    uint vpn;
+    for (vpn = 0; vpn < p->sz; vpn += PGSIZE) {
+        pte_t *pte;
+        pde_t *pde = p->pgdir;
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) == 0) {
+            cprintf("VPN %x is not mapped\n", vpn);
+        } else {
+            //uint pfn = PTE_ADDR(*pte);
+            if ((*pte)&PTE_W){
+                *pte= *pte&(~PTE_W);
+            }
+        }
+    }
 }
 
-int munprotect(void *addr, int len){
+void do_munprotect(struct proc *p){
+    uint vpn;
+    for (vpn = 0; vpn < p->sz; vpn += PGSIZE) {
+        pte_t *pte;
+        pde_t *pde = p->pgdir;
+        if ((pte = walkpgdir(pde, (void*)vpn, 0)) == 0) {
+            cprintf("VPN %x is not mapped\n", vpn);
+        } else {
+            //uint pfn = PTE_ADDR(*pte);
+            if (!((*pte)&PTE_W)){
+                *pte= *pte | PTE_W;
+            }
+        }
+    }
 }
 
 //PAGEBREAK!

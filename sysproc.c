@@ -97,7 +97,7 @@ int sys_mprotect(void) {
     void *addr;
     if(argint(1, &len) < 0)
        return -1;
-    if(ptrint(0, &addr, sizeof(void*))<0)
+    if(argptr(0, (void*)&addr, sizeof(void*)) < 0)
        return -1;
 
     return mprotect(addr, len);
@@ -105,10 +105,11 @@ int sys_mprotect(void) {
 
 int sys_munprotect(void) {
     int len;
-    int addr;
+    void *addr;
     if(argint(1, &len) < 0)
        return -1;
-    addr = proc->sz;
+    if(argptr(0, (void*)&addr, sizeof(void*))<0)
+       return -1;
 
     return munprotect(addr, len);
 }
