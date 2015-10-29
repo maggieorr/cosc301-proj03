@@ -385,7 +385,6 @@ void do_mprotect(struct proc *p) {
         if ((pte = walkpgdir(pde, (void*)vpn, 0)) == 0) {
             cprintf("VPN %x is not mapped\n", vpn);
         } else {
-            //uint pfn = PTE_ADDR(*pte);
             if ((*pte)&PTE_W){
                 *pte= *pte&(~PTE_W);
             }

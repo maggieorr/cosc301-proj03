@@ -92,7 +92,6 @@ sys_uptime(void)
 
 
 int sys_mprotect(void) {
-	//should we be checking address location as well???
     int len;
     void *addr;
     if(argint(1, &len) < 0)
