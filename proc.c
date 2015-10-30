@@ -469,6 +469,10 @@ int mprotect(void *addr,int len, int pid) {
     uint ad = (uint)addr;
     int size = ad + (len*PGSIZE);
     cprintf("addr: %d, size: %d\n", ad, len);
+    
+    if(len<=0){
+      return -1;
+    }
     if(ad%PGSIZE != 0){
       return -1;
     }
@@ -487,7 +491,7 @@ int mprotect(void *addr,int len, int pid) {
     for (i = ad; i < size; i+=PGSIZE) {
        if (ptable.proc[j].state != UNUSED && ptable.proc[j].pid == pid) {
           struct proc *p = &ptable.proc[pid];
-          do_mprotect(p);
+          do_mprotect(p, addr, len);
           rv = 0;
           break;
        }
@@ -501,6 +505,10 @@ int mprotect(void *addr,int len, int pid) {
 int munprotect(void *addr,int len, int pid) {
     uint ad = (uint) addr;
     int size = ad + (len*PGSIZE)-1;
+    if(len<=0){
+      return -1;
+    }
+    
     if (proc->sz < size || proc->sz < ad){
       return -1;
     }
@@ -519,7 +527,7 @@ int munprotect(void *addr,int len, int pid) {
     for (i = ad; i < size; i+=PGSIZE) {
        if (ptable.proc[j].state != UNUSED && ptable.proc[j].pid == pid) {
           struct proc *p = &ptable.proc[pid];
-          do_munprotect(p);
+          do_munprotect(p,addr,len);
           rv = 0;
           break;
        }

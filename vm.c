@@ -379,15 +379,17 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
-void do_mprotect(struct proc *p) {
+void do_mprotect(struct proc *p, void* addr, int len) {
     uint vpn;
-    for (vpn = 0; vpn < p->sz; vpn += PGSIZE) {
+    uint ad = (uint) addr;
+    int size = ad + (len*PGSIZE)-1;
+    for (vpn = ad; vpn < size; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
         if ((pte = walkpgdir(pde, (void*)vpn, 0)) == 0) {
             cprintf("VPN %x is not mapped\n", vpn);
         } else {
-            if (((*pte)&PTE_W) == PTE_W){
+            if (pte!=0 && *pte&PTE_U && *pte&PTE_P){
                 *pte = *pte & (~PTE_W);
             }
         }
@@ -395,15 +397,17 @@ void do_mprotect(struct proc *p) {
     lcr3(v2p(proc->pgdir));
 }
 
-void do_munprotect(struct proc *p){
+void do_munprotect(struct proc *p, void *addr, int len){
     uint vpn;
-    for (vpn = 0; vpn < p->sz; vpn += PGSIZE) {
+    uint ad = (uint) addr;
+    int size = ad + (len*PGSIZE)-1;
+    for (vpn = ad; vpn < size; vpn += PGSIZE) {
         pte_t *pte;
         pde_t *pde = p->pgdir;
         if ((pte = walkpgdir(pde, (void*)vpn, 0)) == 0) {
             cprintf("VPN %x is not mapped\n", vpn);
         } else {
-            if (((*pte)&PTE_W)!= PTE_W){
+            if (pte!=0 && *pte&PTE_U && *pte&PTE_P){
                 *pte= *pte | PTE_W;
             }
         }
