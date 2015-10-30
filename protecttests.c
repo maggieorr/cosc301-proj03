@@ -22,6 +22,7 @@ int ppid;
 int
 main(int argc, char *argv[])
 {
+
   ppid = getpid();
 
   char *brk = sbrk(0);

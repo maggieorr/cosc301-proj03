@@ -178,9 +178,9 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
-int 		mprotect(void*,int);
+int 		mprotect(void*,int,int);
 void 		do_mprotect(struct proc *);
-int 		munprotect(void*,int);
+int 		munprotect(void*,int,int);
 void		do_mprotect(struct proc *);
 
 // number of elements in fixed-size array

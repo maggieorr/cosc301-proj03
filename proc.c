@@ -465,8 +465,7 @@ procdump(void)
   }
 }
 
-int mprotect(void *addr,int len) {
-    int pid = proc->pid;
+int mprotect(void *addr,int len, int pid) {
     char *ad = addr;
     int size = *ad + (len*PGSIZE)-1;
     
@@ -486,12 +485,13 @@ int mprotect(void *addr,int len) {
        }
     }
     release(&ptable.lock);
+
+    cprintf("%d\n", rv);
     return rv;
 }
 
 
-int munprotect(void *addr,int len) {
-    int pid = proc->pid;
+int munprotect(void *addr,int len, int pid) {
     char *ad = addr;
     int size = *ad + (len*PGSIZE)-1;
     
